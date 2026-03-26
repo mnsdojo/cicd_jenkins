@@ -23,6 +23,7 @@ pipeline {
 
         stage('Build') {
             steps {
+                sh 'go version'
                 sh 'go build -o app .'
             }
         }
@@ -40,6 +41,9 @@ pipeline {
         }
         failure {
             echo 'Build failed'
+        }
+        always {
+            echo "Pipeline finished Workspace : ${WORKSPACE}"
         }
     }
 }
