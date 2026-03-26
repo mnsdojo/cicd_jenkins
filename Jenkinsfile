@@ -1,5 +1,15 @@
 pipeline {
     agent any
+    options {
+        buildDiscarder(logRotator(
+            numToKeepStr: '10',
+            daysToKeepStr: '30',
+            artifactNumToKeepStr: '5',
+            artifactDaysToKeepStr: '7'
+        ))
+        timestamps()
+        timeout(time: 10, unit: 'MINUTES')
+    }
     triggers {
         pollSCM('H/5 * * * *')
     }
@@ -20,7 +30,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh 'go test ./...'    // ✅ fixed
+                sh 'go test ./...'
             }
         }
         stage('Build') {
@@ -32,18 +42,21 @@ pipeline {
         stage('Package') {
             steps {
                 sh 'tar -czf app.tar.gz app'
+                archiveArtifacts artifacts: 'app.tar.gz',
+                                 onlyIfSuccessful: true
             }
         }
     }
     post {
-        success {                     // ✅ fixed typo
+        success {
             echo 'Build Passed!'
         }
         failure {
             echo 'Build failed'
         }
         always {
-            echo "Pipeline finished Workspace : ${WORKSPACE}"
+            cleanWs()
+            echo "Pipeline finished Workspace: ${WORKSPACE}"
         }
     }
 }
