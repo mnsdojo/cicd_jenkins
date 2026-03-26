@@ -20,7 +20,11 @@ pipeline {
                 sh 'go mod tidy'
             }
         }
-
+        stage('Test'){
+            steps {
+                sh 'go test'
+            }
+        }
         stage('Build') {
             steps {
                 sh 'go version'
@@ -33,6 +37,7 @@ pipeline {
                 sh 'tar -czf app.tar.gz app'
             }
         }
+
     }
 
     post {
