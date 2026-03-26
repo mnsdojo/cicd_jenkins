@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+     triggers {
+        pollSCM('H/5 * * * *')  // 👈 add this
+    }
     environment {
         GOPATH = "${WORKSPACE}/go"
         PATH = "${env.PATH}:${WORKSPACE}/go/bin"
